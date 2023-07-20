@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -88,9 +89,11 @@ driver.implicitly_wait(10)
 
 #page containing connections
 counter = 0
-for eachConnection in range(2):
+eachConnection = 0
+while eachConnection <= 10:
 
     try:
+        print(eachConnection)
         connectBlock = driver.find_elements(By.XPATH, "//div[contains(@class, 'entity-result__item')]")[eachConnection]
         # print(connectBlock.text)
         if connectBlock.find_element(By.XPATH, ".//span[contains(@class, 'artdeco-button__text') and contains(., 'Connect')]"):
@@ -100,13 +103,19 @@ for eachConnection in range(2):
             profileView.click()
             driver.implicitly_wait(10)
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'text-heading-xlarge')]").text
-            print(profileName)
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__title-container') and contains(., 'Experience')]")
             jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[1]")
             jobRole = jobRoleLocator.text
-            recentCompanyLocator = jobRoleLocator.find_element(By.XPATH, "./following::span[3]")
-            recentCompany = recentCompanyLocator.text
+            if companyName.lower() not in jobRole.lower():
+                recentCompanyLocator = jobRoleLocator.find_element(By.XPATH, "./following::span[3]")
+                recentCompany = recentCompanyLocator.text
+            else:
+                #if most recent experience has multiple roles in the same company
+                recentCompany = jobRole
+                jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[10]")
+                jobRole = jobRoleLocator.text
+
             print(profileName)
             print(jobRole)
             print(recentCompany)
@@ -124,16 +133,30 @@ for eachConnection in range(2):
                     .format(profileName.partition(' ')[0], companyName)
                 addMessage = driver.find_element(By.XPATH, "//textarea").send_keys(promptMessage)
                 driver.implicitly_wait(5)
-                time.sleep(10)
+                time.sleep(30)
                 sendMessageButton = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Send now')]")
                 sendMessageButton.click()
-                
-
-
+                counter += 1
+                driver.implicitly_wait(10)
+            driver.get(searchPeopleURL)
+            eachConnection = eachConnection+1
     
-    except:
-        pass
-        print("Connect button not found")
+    except IndexError:
+        try:
+            print(driver.current_url)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            goToNextPage = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Next')]").click()
+            print("New Page")
+            time.sleep(3)
+            eachConnection = 0
+        except NoSuchElementException:
+            print("End of Results reached")
+        
+    except NoSuchElementException:
+        print("Connect Button Not Found")
+        eachConnection = eachConnection+1
+    
+
 
 #input company
 # searchOrg = driver.find_element(By.XPATH, '/html/body/div[5]/header/div/div/div/div[1]/input')
