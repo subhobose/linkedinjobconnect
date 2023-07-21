@@ -6,8 +6,14 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import time
 
+# from traverseConnections import traverseAndSaveConnections
+
+class InvalidLocationException(Exception):
+    "Location other than US"
+    pass
+
 companyName = "AMD"
-connectionSearchCriteria =companyName + " software"
+connectionSearchCriteria =companyName + " software india"
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
 
@@ -19,12 +25,13 @@ driver.maximize_window()
 username = driver.find_element(By.NAME, "session_key")
 username.send_keys("subhobose99@gmail.com")
 password = driver.find_element(By.NAME, "session_password")
-password.send_keys("fYrjah-pujqes-qyrqu4")
+password.send_keys("Enter password")
 actions.send_keys(Keys.ENTER)
 actions.perform()
 driver.implicitly_wait(10)
 
 # nameList, headLineList = traverseAndSaveConnections()
+# print(nameList, headLineList)
 
 #input search criteria
 searchBar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]").send_keys(connectionSearchCriteria)
@@ -55,6 +62,10 @@ while eachConnection <= 10:
             profileView.click()
             driver.implicitly_wait(10)
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'text-heading-xlarge')]").text
+            currentLocation = driver.find_element(By.XPATH, "//div[contains(@class, 'pv-text-details__left-panel mt2')]").text
+
+            if "United States" not in currentLocation:
+                raise InvalidLocationException
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__title-container') and contains(., 'Experience')]")
             jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[1]")
@@ -67,6 +78,9 @@ while eachConnection <= 10:
                 recentCompany = jobRole
                 jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[10]")
                 jobRole = jobRoleLocator.text
+                additionalData = experienceLocator.find_element(By.XPATH, "./following::span[7]").text
+                jobRole = jobRole + additionalData
+
 
             print(profileName)
             print(jobRole)
@@ -109,15 +123,10 @@ while eachConnection <= 10:
         print("Connect Button Not Found")
         eachConnection = eachConnection+1
 
+    except InvalidLocationException:
+        print("Not based outta US")
+        eachConnection = eachConnection+1
+        driver.get(searchPeopleURL)
+
 print("A total of {} new requests sent!". format(counter))
     
-
-
-#input company
-# searchOrg = driver.find_element(By.XPATH, '/html/body/div[5]/header/div/div/div/div[1]/input')
-# searchOrg.send_keys(companyName)
-# actions.send_keys(Keys.ENTER)
-# actions.perform()
-# driver.implicitly_wait(10)
-# peopleButton = driver.find_element(By.XPATH, '/html/body/div[5]/div[3]/div[2]/section/div/nav/div/ul/li[3]/button')
-# peopleButton.click()
