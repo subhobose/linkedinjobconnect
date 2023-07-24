@@ -12,8 +12,8 @@ class InvalidLocationException(Exception):
     "Location other than US"
     pass
 
-companyName = "AMD"
-connectionSearchCriteria =companyName + " software india"
+companyName = "Bytedance"
+connectionSearchCriteria =companyName + " software manager"
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
 
@@ -48,11 +48,11 @@ eachConnection = 0
 noOfPagesCounter = 1
 while eachConnection <= 10:
 
-    if counter >=10:
+    if counter >=15:
         break
 
     try:
-        print(eachConnection)
+        print(eachConnection+1)
         connectBlock = driver.find_elements(By.XPATH, "//div[contains(@class, 'entity-result__item')]")[eachConnection]
         # print(connectBlock.text)
         if connectBlock.find_element(By.XPATH, ".//span[contains(@class, 'artdeco-button__text') and contains(., 'Connect')]"):
@@ -64,7 +64,7 @@ while eachConnection <= 10:
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'text-heading-xlarge')]").text
             currentLocation = driver.find_element(By.XPATH, "//div[contains(@class, 'pv-text-details__left-panel mt2')]").text
 
-            if "United States" not in currentLocation:
+            if "India" in currentLocation:
                 raise InvalidLocationException
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__title-container') and contains(., 'Experience')]")
@@ -87,19 +87,19 @@ while eachConnection <= 10:
             print(recentCompany)
 
             #include check condition to send
-            if "intern" not in jobRole.lower() and companyName.lower() in recentCompany.lower():
+            if "intern" not in jobRole.lower() and "intern" not in recentCompany.lower() and companyName.lower() in recentCompany.lower():
                 print("Valid! Let's connect!")
-                connectButton = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Invite')]")
+                connectButton = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-profile-actions')]//button[contains(@aria-label, 'Invite')]")
                 connectButton.click()
                 driver.implicitly_wait(5)
                 connectWithMessage = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Add a note')]")
                 connectWithMessage.click()
                 driver.implicitly_wait(5)
-                promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Fall 2023 internship.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
+                promptMessage = "Hi {},\n**Enter intro**\n{} is one of the companies I have closely followed for a long time. **Enter body**\nThanks!"\
                     .format(profileName.partition(' ')[0], companyName)
                 addMessage = driver.find_element(By.XPATH, "//textarea").send_keys(promptMessage)
                 driver.implicitly_wait(5)
-                time.sleep(30)              #for checking rn, will be modified
+                time.sleep(5)              #for checking rn, will be modified
                 sendMessageButton = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Send now')]")
                 sendMessageButton.click()
                 counter += 1
