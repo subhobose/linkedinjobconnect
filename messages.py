@@ -11,7 +11,7 @@ def traverseAndReply(driver):
     
     eachConnection = 0
     
-    while eachConnection <3:
+    while eachConnection <20:
         
         try:
             #declare element
