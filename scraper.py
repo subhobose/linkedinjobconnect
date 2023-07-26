@@ -7,12 +7,13 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 # from traverseConnections import traverseAndSaveConnections
+from messages import traverseAndReply
 
 class InvalidLocationException(Exception):
     "Location other than US"
     pass
 
-companyName = "Optiver"
+companyName = "Tesla"
 connectionSearchCriteria =companyName + " software manager"
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
@@ -28,10 +29,11 @@ password = driver.find_element(By.NAME, "session_password")
 password.send_keys("Enter password")
 actions.send_keys(Keys.ENTER)
 actions.perform()
-time.sleep(10)
+time.sleep(15)
 
-# nameList, headLineList = traverseAndSaveConnections()
-# print(nameList, headLineList)
+
+# Messages Flow
+traverseAndReply(driver)
 
 #input search criteria
 searchBar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]").send_keys(connectionSearchCriteria)
@@ -120,10 +122,17 @@ while eachConnection <= 10:
             else:
                 connectButton[0].click()
             driver.implicitly_wait(5)
+            emailVerify = driver.find_elements(By.XPATH, "//label[contains(@for, 'email')]")
+            if len(emailVerify)>0:
+                raise NoSuchElementException
             connectWithMessage = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Add a note')]")
             connectWithMessage.click()
             driver.implicitly_wait(5)
-            promptMessage = "Enter Invitation Message"\
+            # promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a New Grad Software 2024 role.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
+            #     .format(profileName.partition(' ')[0], companyName)
+            # promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Fall 2023 Internship.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
+            #     .format(profileName.partition(' ')[0], companyName)
+            promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Spring 2024 Internship.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
                 .format(profileName.partition(' ')[0], companyName)
             addMessage = driver.find_element(By.XPATH, "//textarea").send_keys(promptMessage)
             driver.implicitly_wait(5)

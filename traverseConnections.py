@@ -1,20 +1,13 @@
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
 
 import pandas as pd
 
-chrome_options = Options()
-chrome_options.add_experimental_option("detach", True)
-
-driver = webdriver.Chrome(options=chrome_options)
-actions = ActionChains(driver)
-
-def traverseAndSaveConnections():
-
+def traverseAndSaveConnections(driver):
+    
+    actions = ActionChains(driver)
     nameList = []
     headlineList = []
     # extract list of connections
