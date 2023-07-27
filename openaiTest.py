@@ -14,7 +14,7 @@ def saveKnowledgeBase(pathToFile, newJsonData):
         
 def findBestMatchForQuery(userQuery, questions):
     
-    matchedResponses = get_close_matches(userQuery, questions, n=1, cutoff=0.7)
+    matchedResponses = get_close_matches(userQuery, questions, n=1, cutoff=0.6)
     return matchedResponses[0] if matchedResponses else None
 
 def getResponse(question, knowledgeBase):
@@ -48,6 +48,7 @@ def chatbot():
                 knowledgeBase["questions"].append({"question": userInput, "answer": newResponse})
                 saveKnowledgeBase('knowledgeBase.json', knowledgeBase)
                 print("Bot: Understood!")
+                knowledgeBase = loadKnowledgeBase('knowledgeBase.json')
                 
     
 if __name__ == "__main__":
