@@ -16,6 +16,7 @@ def main():
     scraper.login(driver)
     # messages.traverseAndReply(driver)
     scraper.searchAndSendRequests(driver, connectionSearchCriteria, companyName)
+    driver.quit()
 
 if __name__ == "__main__":
     main()

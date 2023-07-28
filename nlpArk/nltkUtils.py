@@ -1,5 +1,7 @@
 import nltk
 from nltk.stem.porter import PorterStemmer
+import numpy as np
+
 stemmer = PorterStemmer()
 
 # nltk.download('punkt')
@@ -11,6 +13,15 @@ def stemWords(word):
 
 sample = "How are you?"
 
-# print(tokenize(sample))
-# print(stemWords("shipping"))
+def bagOfWords(tokenizedSentence, allWords):
+    
+    tokenizedSentence = [stemWords(w) for w in tokenizedSentence]
+    
+    bag = np.zeros(len(allWords), dtype=np.float32)
+    
+    for i, w in enumerate(allWords):
+        if w in tokenizedSentence:
+            bag[i] = 1.0
+    
+    return bag
 
