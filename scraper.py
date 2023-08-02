@@ -17,21 +17,19 @@ def login(driver):
     username = driver.find_element(By.NAME, "session_key")
     username.send_keys("subhobose99@gmail.com")
     password = driver.find_element(By.NAME, "session_password")
-    password.send_keys("Enter password")
+    password.send_keys("fYrjah-pujqes-qyrqu4")
     actions.send_keys(Keys.ENTER)
     actions.perform()
     time.sleep(15)
-
-
-# Messages Flow
-# traverseAndReply(driver)
 
 def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
     
     actions = ActionChains(driver)
     
     #input search criteria
-    searchBar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]").send_keys(connectionSearchCriteria)
+    searchBar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]")
+    searchBar.clear()
+    searchBar.send_keys(connectionSearchCriteria)
     actions.send_keys(Keys.ENTER)
     actions.perform()
 
@@ -76,6 +74,8 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
             profileView.click()
             driver.implicitly_wait(10)
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'text-heading-xlarge')]").text
+            profileName = profileName.encode('utf-8')
+            profileName = repr(profileName)[2:-1]
             currentLocation = driver.find_element(By.XPATH, "//div[contains(@class, 'pv-text-details__left-panel mt2')]").text
 
             #if connection already pending

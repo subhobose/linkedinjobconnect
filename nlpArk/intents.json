@@ -5,79 +5,81 @@
         "patterns": [
           "Hi",
           "Hey",
-          "How are you",
-          "Is anyone there?",
+          "How are you doing Subhrangsu",
+          "Hello Subhrangsu",
           "Hello",
-          "Good day"
+          "Hi Subhrangsu"
         ],
         "responses": [
-          "Hey :-)",
-          "Hello, thanks for visiting",
-          "Hi there, what can I do for you?",
-          "Hi there, how can I help?"
+          "Hey!",
+          "Hello!",
+          "I'm doing well thanks for asking!"
         ]
       },
       {
-        "tag": "goodbye",
-        "patterns": ["Bye", "See you later", "Goodbye"],
-        "responses": [
-          "See you later, thanks for visiting",
-          "Have a nice day",
-          "Bye! Come back again soon."
-        ]
-      },
-      {
-        "tag": "thanks",
-        "patterns": ["Thanks", "Thank you", "That's helpful", "Thank's a lot!"],
-        "responses": ["Happy to help!", "Any time!", "My pleasure"]
-      },
-      {
-        "tag": "items",
+        "tag": "questions",
         "patterns": [
-          "Which items do you have?",
-          "What kinds of items are there?",
-          "What do you sell?"
+          "Let me know your questions and I'll be happy to answer", 
+          "What are your questions", 
+          "Do you have any questions",
+          "please let me know your questions",
+          "what questions do you have",
+          "please let me know any questions you have about the job search process"
         ],
         "responses": [
-          "We sell coffee and tea",
-          "We have coffee and tea"
+          "Could you tell me about the company culture, how has your time been there and is it a good workplace for young individuals to grow?",
+          "Would you say that the impact is visible in a big company such as yours?"
         ]
       },
       {
-        "tag": "payments",
+        "tag": "referral",
         "patterns": [
-          "Do you take credit cards?",
-          "Do you accept Mastercard?",
-          "Can I pay with Paypal?",
-          "Are you cash only?"
+          "I can refer you", 
+          "apply with this link for my referral", 
+          "I can provide you a referral",
+          "I can provide you a referral if you send me your resume and req ID",
+          "Can you please send me the job link which you want referral for, your first name, last name and email id, so that I can refer you",
+          "I can refer you to a role if you have a req in mind",
+          "If you need referral, I am happy to do it."
         ],
         "responses": [
-          "We accept VISA, Mastercard and Paypal",
-          "We accept most major credit cards, and Paypal"
+         "Thank you so much for the offer. I'll look for relevant opportunities and get back to you."
         ]
       },
       {
-        "tag": "delivery",
+        "tag": "schedule",
         "patterns": [
-          "How long does delivery take?",
-          "How long does shipping take?",
-          "When do I get my delivery?"
+          "Ping me on the weekends",
+          "Let's connect this weekend",
+          "I will have some time over the weekend",
+          "Let’s connect next week"
         ],
         "responses": [
-          "Delivery takes 2-4 days",
-          "Shipping takes 2-4 days"
+          "Sure! We can schedule a call/chat at your convenience"
         ]
       },
       {
-        "tag": "funny",
+        "tag": "resume",
         "patterns": [
-          "Tell me a joke!",
-          "Tell me something funny!",
-          "Do you know a joke?"
+          "Please send me your resume",
+          "Send me the positions you are interested in along with your resume. I can refer",
+          "Can you share the resume and link to",
+          "Send me your resume when you get a chance, we can take it from there."
+
         ],
         "responses": [
-          "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
-          "What did the buffalo say when his son left for college? Bison."
+          "I'll send you my Resume ASAP"
+        ]
+      },
+      {
+        "tag": "fail",
+        "patterns": [
+          "Sorry my team has no matched opening right now",
+          "Hi, no openings on my team",
+          "Hi, no openings on my team for this fall. Good luck with your search!"
+        ],
+        "responses": [
+          "I understand! Thank you for your response! I'll be on the lookout for future opportunities"
         ]
       }
     ]
