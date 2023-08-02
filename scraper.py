@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import time
+import yaml
 
 class InvalidLocationException(Exception):
     "Location other than US"
@@ -14,10 +15,13 @@ def login(driver):
     actions = ActionChains(driver)
     driver.get("https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin")
     driver.maximize_window()
+    
+    with open('config\\credentials.yml', 'r') as file:
+        config = yaml.safe_load(file)
     username = driver.find_element(By.NAME, "session_key")
-    username.send_keys("subhobose99@gmail.com")
+    username.send_keys(config['user_email'])
     password = driver.find_element(By.NAME, "session_password")
-    password.send_keys("fYrjah-pujqes-qyrqu4")
+    password.send_keys(config['password'])
     actions.send_keys(Keys.ENTER)
     actions.perform()
     time.sleep(15)

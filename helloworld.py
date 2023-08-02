@@ -1,8 +1,8 @@
 # print("hello")
 
 testString = b'Subhrangsu Bose'
-print(type(""))
-print(type(repr(testString)[2:-1]))
+# print(type(""))
+print(repr(testString)[2:-1])
 
 textMessage = "Hi Bose,\n\
 I am a MSCS student at UT Dallas and I am currently on the hunt for a Fall 2023 internship.\n\
