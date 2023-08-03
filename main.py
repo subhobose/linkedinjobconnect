@@ -15,12 +15,12 @@ def main():
     scraper.login(driver)
     messages.traverseAndReply(driver)
     
-    companyList = ["Snap Inc.", "BlackRock", "Rocket Lab", "Walmart", "Tesla", "Five Rings"]
+    # companyList = ["Snap Inc.", "BlackRock", "Rocket Lab", "Walmart", "Tesla", "Five Rings"]
     
-    for companyName in companyList:
-        connectionSearchCriteria = companyName + " software manager"
-        scraper.searchAndSendRequests(driver, connectionSearchCriteria, companyName)
-    driver.quit()
+    # for companyName in companyList:
+    #     connectionSearchCriteria = companyName + " software manager"
+    #     scraper.searchAndSendRequests(driver, connectionSearchCriteria, companyName)
+    # driver.quit()
 
 if __name__ == "__main__":
     main()

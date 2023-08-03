@@ -10,7 +10,6 @@ with open('intents.json', 'r') as f:
     intents = json.load(f)
 FILE = "data.pth"
 data = torch.load(FILE)
-
 input_size = data["input_size"]
 hidden_size = data["hidden_size"]
 output_size = data["output_size"]
@@ -23,32 +22,26 @@ model.load_state_dict(model_state)
 
 model.eval()
 
-bot_name = "Bose"
-print("Lets talk! Type 'quit' to Exit")
-
-while True:
-    sentence = input("You: ")
-    if sentence == "quit":
-        break
+def chatFunction(sentence):
     
     sentence = tokenize(sentence)
     x = bagOfWords(sentence, allWords)
     x = x.reshape(1, x.shape[0])
     x = torch.from_numpy(x)
-    
+
     output = model(x)
     _, predicted = torch.max(output, dim=1)
     tag = tags[predicted.item()]
-    
+
     probs = torch.softmax(output, dim=1)
     prob = probs[0][predicted.item()]
-    
+
     if prob > 0.9:
         for intent in intents["intents"]:
             if tag == intent["tag"]:
-                print(f'{bot_name}: {random.choice(intent["responses"])}')
-    
+                return random.choice(intent["responses"])
+
     else:
-        print(f'{bot_name}: No appropriate response')
+        return ("No appropriate response")
         
 

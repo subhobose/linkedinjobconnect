@@ -52,7 +52,9 @@
           "Ping me on the weekends",
           "Let's connect this weekend",
           "I will have some time over the weekend",
-          "Let’s connect next week"
+          "Let’s connect next week",
+          "Sure, but not this week as I'm traveling this week.",
+          "Sure. I’d prefer a phone call or LinkedIn chat if that’s okay with you"
         ],
         "responses": [
           "Sure! We can schedule a call/chat at your convenience"
