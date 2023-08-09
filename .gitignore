@@ -3,3 +3,9 @@ __pycache__/traverseConnections.cpython-311.pyc
 __pycache__/scraper.cpython-311.pyc
 nlpArk/__pycache__/nltkUtils.cpython-311.pyc
 nlpArk/__pycache__/model.cpython-311.pyc
+config/credentials.yml
+__pycache__/chat.cpython-311.pyc
+__pycache__/chatgpt_connect.cpython-311.pyc
+__pycache__/increaseReach.cpython-311.pyc
+__pycache__/model.cpython-311.pyc
+__pycache__/nltkUtils.cpython-311.pyc
