@@ -14,7 +14,7 @@ def traverseAndReply(driver):
     
     eachConnection = 0
     
-    while eachConnection <50:
+    while eachConnection <10:
         
         try:
             #declare element
@@ -28,12 +28,12 @@ def traverseAndReply(driver):
                 followupText = latestText.split('\n')[0] + "\nThank you for accepting my connection request! I am currently planning the next step in my career. Would you be willing to discuss with me your day-to-day work, company culture and any pointers that I should keep in mind during my search? \nThanks!"
                 textBox = driver.find_element(By.XPATH, "//div[contains(@class, 'message-texteditor')]//div[contains(@aria-label, 'Write a message')]")
                 textBox.send_keys(followupText)
-                time.sleep(1)
+                time.sleep(3)
                 sendMessage = driver.find_element(By.XPATH, "//button[contains(., 'Send')]").click()
             
             else:
                 lastPersonWhoTexted = driver.find_elements(By.XPATH, "//span[contains(@class, 'profile-link')]")
-                print(lastPersonWhoTexted[-1].text)
+                # print(lastPersonWhoTexted[-1].text)
                 if "Subhrangsu Bose" not in lastPersonWhoTexted[-1].text: 
                     followupText = chat.chatFunction(latestText)
                     if "No appropriate response" not in followupText:

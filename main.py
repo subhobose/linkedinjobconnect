@@ -1,6 +1,7 @@
 import scraper
 import messages
 import traverseConnections
+import increaseReach
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -13,14 +14,16 @@ def main():
     driver = webdriver.Chrome(options=chrome_options)
     
     scraper.login(driver)
-    messages.traverseAndReply(driver)
+    # increaseReach.increaseUserReachAndEngagement(driver)
     
-    # companyList = ["Snap Inc.", "BlackRock", "Rocket Lab", "Walmart", "Tesla", "Five Rings"]
+    # messages.traverseAndReply(driver)
     
-    # for companyName in companyList:
-    #     connectionSearchCriteria = companyName + " software manager"
-    #     scraper.searchAndSendRequests(driver, connectionSearchCriteria, companyName)
-    # driver.quit()
+    companyList = ["Symplicity"]
+    
+    for companyName in companyList:
+        connectionSearchCriteria = companyName + " software manager"
+        scraper.searchAndSendRequests(driver, connectionSearchCriteria, companyName)
+    driver.quit()
 
 if __name__ == "__main__":
     main()
