@@ -29,6 +29,7 @@ def login(driver):
 def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
     
     actions = ActionChains(driver)
+    homePageURL = driver.current_url
     
     #input search criteria
     searchBar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]")
@@ -170,4 +171,5 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
             time.sleep(3)
 
     print("A total of {} new requests sent!". format(counter))
+    driver.get(homePageURL)
         
