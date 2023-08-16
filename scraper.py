@@ -88,7 +88,7 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
             if len(pendingButton)>0:
                 raise NoSuchElementException
 
-            if "India" in currentLocation:
+            if "United States" not in currentLocation:
                 raise InvalidLocationException
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__title-container') and contains(., 'Experience')]")
