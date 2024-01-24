@@ -5,6 +5,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import time
 import yaml
+import copy
 
 class InvalidLocationException(Exception):
     "Location other than US"
@@ -26,7 +27,7 @@ def login(driver):
     actions.perform()
     time.sleep(15)
 
-def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
+def searchAndSendRequests(driver, connectionSearchCriteria, companyName, companySpecificTeam):
     
     actions = ActionChains(driver)
     homePageURL = driver.current_url
@@ -59,6 +60,9 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
     showCompanyResults = selectCompanyFromList.find_element(By.XPATH, "./following::button[2]").click()
     time.sleep(2)
 
+    # selectActivelyHiring = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Actively hiring')]").click()
+    # time.sleep(2)
+
     #page containing connections
     counter = 0
     eachConnection = 0
@@ -70,7 +74,7 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
 
         try:
             print(eachConnection+1)
-            connectBlock = driver.find_elements(By.XPATH, "//div[contains(@class, 'entity-result__item')]")[eachConnection]
+            connectBlock = driver.find_elements(By.XPATH, "//li[contains(@class, 'reusable-search__result-container')]")[eachConnection]
             # print(connectBlock.text)
             # if connectBlock.find_element(By.XPATH, ".//span[contains(@class, 'artdeco-button__text') and contains(., 'Connect')]"):
             profileView = connectBlock.find_element(By.XPATH, ".//span[contains(@class, 'entity-result__title-text')]")
@@ -81,15 +85,16 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'text-heading-xlarge')]").text
             profileName = profileName.encode('utf-8')
             profileName = repr(profileName)[2:-1]
-            currentLocation = driver.find_element(By.XPATH, "//div[contains(@class, 'pv-text-details__left-panel mt2')]").text
+            currentLocation = driver.find_element(By.XPATH, "//span[contains(@class, 'text-body-small inline t-black--light break-words')]").text
 
             #if connection already pending
-            pendingButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'pvs-profile-actions')]//button[contains(@aria-label, 'Pending')]")
+            pendingButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Pending')]")
             if len(pendingButton)>0:
+                print("Pending button found")
                 raise NoSuchElementException
 
-            if "United States" not in currentLocation:
-                raise InvalidLocationException
+            # if "United States" not in currentLocation:
+            #     raise InvalidLocationException
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__title-container') and contains(., 'Experience')]")
             jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[1]")
@@ -113,12 +118,12 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
             #include check condition to send
             if "intern" not in jobRole.lower() and "intern" not in recentCompany.lower() and companyName.lower() in recentCompany.lower():
                 print("Valid! Let's connect!")
-                connectButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'pvs-profile-actions')]//button[contains(@aria-label, 'Invite')]")
+                connectButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Connect')]")
                 if len(connectButton) == 0:
-                    moreButton = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-profile-actions')]//button[contains(@aria-label, 'More')]")
+                    moreButton = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'More')]")
                     moreButton.click()
                     driver.implicitly_wait(10)
-                    connectButtonAlt = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-profile-actions')]//div[contains(@aria-hidden, 'false')]//div[contains(@aria-label, 'Invite')]").click()
+                    connectButtonAlt = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//div[contains(@aria-hidden, 'false')]//div[contains(@aria-label, 'Invite')]").click()
                 else:
                     connectButton[0].click()
                 driver.implicitly_wait(5)
@@ -128,12 +133,16 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName):
                 connectWithMessage = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Add a note')]")
                 connectWithMessage.click()
                 driver.implicitly_wait(5)
-                # promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a New Grad Software 2024 role.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
-                #     .format(profileName.partition(' ')[0], companyName)
+                companyNameInText = copy.deepcopy(companyName)
+                if len(companyName.split()) > 1:
+                    companyNameInText = "".join(e[0] for e in companyName.split())
+                promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a New Grad Software 2024 role. I have been developing SW for 3+ years. \nI have closely followed {} for a long time. Can you help me become a part of the team?\nThanks!"\
+                    .format(profileName.partition(' ')[0], companyNameInText)
+                #     .format(profileName.partition(' ')[0], companyNameInText)
                 # promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Fall 2023 Internship.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
                 #     .format(profileName.partition(' ')[0], companyName)
-                promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Spring 2024 Internship.\n{} is one of the companies I have closely followed for a long time. Would you be willing to connect with me for an informational interview for 15 mins at your convenience?\nThanks!"\
-                    .format(profileName.partition(' ')[0], companyName)
+                # promptMessage = "Hi {},\nI am a MSCS student at UT Dallas and I am currently on the hunt for a Spring 2024 Internship. I have been developing SW for 3+ years.\nI have closely followed {} and I believe I am a great fit. Can you help me become a part of the team?\nThanks!"\
+                #     .format(profileName.partition(' ')[0], companyNameInText)
                 addMessage = driver.find_element(By.XPATH, "//textarea").send_keys(promptMessage)
                 driver.implicitly_wait(5)
                 time.sleep(5)              #for checking rn, will be modified
