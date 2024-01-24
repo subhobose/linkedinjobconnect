@@ -90,7 +90,6 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
             #if connection already pending
             pendingButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Pending')]")
             if len(pendingButton)>0:
-                print("Pending button found")
                 raise NoSuchElementException
 
             # if "United States" not in currentLocation:
@@ -118,7 +117,7 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
             #include check condition to send
             if "intern" not in jobRole.lower() and "intern" not in recentCompany.lower() and companyName.lower() in recentCompany.lower():
                 print("Valid! Let's connect!")
-                connectButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Connect')]")
+                connectButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Invite')]")
                 if len(connectButton) == 0:
                     moreButton = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'More')]")
                     moreButton.click()
