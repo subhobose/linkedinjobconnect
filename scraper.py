@@ -11,6 +11,18 @@ class InvalidLocationException(Exception):
     "Location other than US"
     pass
 
+class PendingConnectionException(Exception):
+    "Connection sent, pending"
+    pass
+
+class ExistingConnectionException(Exception):
+    "Existing connection"
+    pass
+
+class EmailVerificationReqdException(Exception):
+    "Email verification required (popular hoe)"
+    pass
+
 def login(driver):
     
     actions = ActionChains(driver)
@@ -44,8 +56,6 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
     driver.implicitly_wait(10)
 
     #flow to include 2nd and 3rd connections only
-    # selectConnections = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Connections filter.')]").click()
-    driver.implicitly_wait(5)
     selectSecondConnections = driver.find_element(By.XPATH, "//button[@aria-label='2nd']").click()
     selectOtherConnections = driver.find_element(By.XPATH, "//button[@aria-label='3rd+']")
     selectOtherConnections.click()
@@ -71,26 +81,27 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
 
         try:
             connectBlock = driver.find_elements(By.XPATH, "//div[contains(@class, 'linked-area')]")[eachConnection]
-            profileView = connectBlock.find_element(By.XPATH, ".//div[contains(@class, 'presence-entity presence-entity--size-3')]")
             searchPeopleURL = driver.current_url
-            profileView.click()
+            connectBlock.click()
             driver.implicitly_wait(10)
+            profileNoAccess = driver.find_elements(By.XPATH, "//button[contains(@class, 'fr artdeco-button')]")
+            if len(profileNoAccess)>0:
+                profileNoAccess[0].click()
+                eachConnection=eachConnection+1
+                continue
             profileName = driver.find_element(By.XPATH, "//h1[contains(@class, 'v-align-middle')]").text
             profileName = profileName.encode('utf-8')
             profileName = repr(profileName)[2:-1]
-            print(profileName)
-            # currentLocation = driver.find_element(By.XPATH, "//span[contains(@class, 'text-body-small inline t-black--light break-words')]").text
 
             #if connection already pending
             pendingButton = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Pending')]")
             if len(pendingButton)>0:
-                raise NoSuchElementException
+                raise PendingConnectionException
 
             #if most recent experience is independent
             experienceLocator = driver.find_element(By.XPATH, "//div[contains(@class, 'pvs-header__top-container') and contains(., 'Experience')]")
             jobRoleLocator = experienceLocator.find_element(By.XPATH, "./following::span[1]")
             jobRole = jobRoleLocator.text
-            print(jobRole)
             if companyName.lower() not in jobRole.lower():
                 recentCompanyLocator = jobRoleLocator.find_element(By.XPATH, "./following::span[3]")
                 recentCompany = recentCompanyLocator.text
@@ -101,7 +112,6 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
                 jobRole = jobRoleLocator.text
                 additionalData = experienceLocator.find_element(By.XPATH, "./following::span[7]").text
                 jobRole = jobRole + additionalData
-
 
             print(profileName)
             print(jobRole)
@@ -115,28 +125,34 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
                     moreButton = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'More')]")
                     moreButton.click()
                     driver.implicitly_wait(10)
-                    connectButtonAlt = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//div[contains(@aria-hidden, 'false')]//div[contains(@aria-label, 'Invite')]").click()
-                else:
+                    connectButtonAlt = driver.find_elements(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//div[contains(@aria-hidden, 'false')]//div[contains(@aria-label, 'Invite')]")
+                    if len(connectButtonAlt) > 0:
+                        connectButtonAlt[0].click()
+                    else:
+                        raise ExistingConnectionException
+                elif len(connectButton) > 0:
                     connectButton[0].click()
+
                 driver.implicitly_wait(5)
                 emailVerify = driver.find_elements(By.XPATH, "//label[contains(@for, 'email')]")
                 if len(emailVerify)>0:
-                    raise NoSuchElementException
+                    raise EmailVerificationReqdException
                 connectWithMessage = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Add a note')]")
                 connectWithMessage.click()
                 driver.implicitly_wait(5)
                 companyNameInText = copy.deepcopy(companyName)
                 if len(companyName.split()) > 1:
                     companyNameInText = "".join(e[0] for e in companyName.split())
-                promptMessage = "Hi {},\nI am a software engineer at Ericsson with 3+ years of experience automating large-scale cloud-native systems using Python and Kubernetes. I've been impressed by {}'s cutting-edge solutions in the tech space. Can you help me become a part of the team?\nThanks!"\
+                promptMessage = "Hi {},\nI am a SWE at Ericsson with 3+ years of experience automating large-scale cloud-native systems using Python and Kubernetes. I've been impressed by {}'s recent projects and would love to help drive similar innovation. Can you help me become a part of the team?\nThanks!"\
                     .format(profileName.partition(' ')[0], companyNameInText)
                 addMessage = driver.find_element(By.XPATH, "//textarea[contains(@name, 'message')]").send_keys(promptMessage)
                 driver.implicitly_wait(5)
-                time.sleep(10)              #for checking rn, will be modified
+                time.sleep(2)              #for checking rn, will be modified
                 sendMessageButton = driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Send invitation')]")
                 sendMessageButton.click()
                 counter += 1
                 driver.implicitly_wait(10)
+                
             driver.get(searchPeopleURL)
             time.sleep(3)
             eachConnection = eachConnection+1
@@ -154,8 +170,31 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
                 print("End of Results reached")
             
         #incase of pending connection requests
-        except NoSuchElementException:
-            print("Connect Button Not Found")
+        except ExistingConnectionException:
+            print("Existing connection")
+            messageExistingConnection = driver.find_element(By.XPATH, "//div[contains(@class, 'ph5 pb5')]//button[contains(@aria-label, 'Message')]").click()
+            driver.implicitly_wait(5)
+            companyNameInText = copy.deepcopy(companyName)
+            if len(companyName.split()) > 1:
+                companyNameInText = "".join(e[0] for e in companyName.split())
+            promptMessage = "Hi {},\nHope you're doing well! I am currently a software engineer at Ericsson, automating large-scale cloud-native systems using Python and Kubernetes. I've been following {}'s recent projects and wanted to ask if there might be any openings where my background could be a fit.\nThanks!"\
+            .format(profileName.partition(' ')[0], companyNameInText)
+            addMessage = driver.find_element(By.XPATH, "//div[contains(@role, 'textbox')]").send_keys(promptMessage)
+            sendMessageButton = driver.find_element(By.XPATH, "//button[contains(@class, 'send-button')]").click()
+            counter += 1
+            driver.implicitly_wait(10)
+            driver.get(searchPeopleURL)
+            time.sleep(3)
+            eachConnection = eachConnection+1
+        
+        except PendingConnectionException:
+            print("Connection pending")
+            eachConnection = eachConnection+1
+            driver.get(searchPeopleURL)
+            time.sleep(3)
+        
+        except EmailVerificationReqdException:
+            print("Email verification reqd")
             eachConnection = eachConnection+1
             driver.get(searchPeopleURL)
             time.sleep(3)
@@ -165,6 +204,9 @@ def searchAndSendRequests(driver, connectionSearchCriteria, companyName, company
             eachConnection = eachConnection+1
             driver.get(searchPeopleURL)
             time.sleep(3)
+        
+        except Exception as e:
+            print(f"An error has occurred: {e}")
 
     print("A total of {} new requests sent!". format(counter))
     driver.get(homePageURL)
